@@ -819,6 +819,7 @@ namespace Vulnerator.Model
         {
             try
             {
+                /* Original values
                 poamOpenXmlWriter.WriteStartElement(new Row());
                 WriteCellValue(poamOpenXmlWriter, "Control Vulnerability Description", 16);
                 WriteCellValue(poamOpenXmlWriter, string.Empty, 16);
@@ -835,6 +836,35 @@ namespace Vulnerator.Model
                 WriteCellValue(poamOpenXmlWriter, "Source Identifying Control Vulnerability", 16);
                 WriteCellValue(poamOpenXmlWriter, "Status", 16);
                 WriteCellValue(poamOpenXmlWriter, "Comments", 16);
+                poamOpenXmlWriter.WriteEndElement();*/
+
+                //New POAM Values Importable
+                poamOpenXmlWriter.WriteStartElement(new Row());
+                WriteCellValue(poamOpenXmlWriter, "Control Vulnerability Description", 16);
+                WriteCellValue(poamOpenXmlWriter, string.Empty, 16);
+                WriteCellValue(poamOpenXmlWriter, @"Security Control Number (NC/NA controls only)", 16);
+                WriteCellValue(poamOpenXmlWriter, @"Office/Org", 16);
+                WriteCellValue(poamOpenXmlWriter, "Security Checks", 16);
+                WriteCellValue(poamOpenXmlWriter, "Resources Required", 16);
+                WriteCellValue(poamOpenXmlWriter, "Scheduled Completion Date", 16);
+                WriteCellValue(poamOpenXmlWriter, "Milestone with Completion Dates", 16);
+                WriteCellValue(poamOpenXmlWriter, "Milestone Changes", 16);
+                WriteCellValue(poamOpenXmlWriter, "Source Identifying Vulnerability", 16);
+                WriteCellValue(poamOpenXmlWriter, "Status", 16);
+                WriteCellValue(poamOpenXmlWriter, "Comments", 16);
+                WriteCellValue(poamOpenXmlWriter, "Raw Severity", 16);
+                WriteCellValue(poamOpenXmlWriter, "Devices Affected", 16);
+                WriteCellValue(poamOpenXmlWriter, "Mitigations", 16);
+                WriteCellValue(poamOpenXmlWriter, "Predisposing Conditions", 16);
+                WriteCellValue(poamOpenXmlWriter, "Severity", 16);
+                WriteCellValue(poamOpenXmlWriter, "Relevance of Threat", 16);
+                WriteCellValue(poamOpenXmlWriter, "Threat Description", 16);
+                WriteCellValue(poamOpenXmlWriter, "Likelihood", 16);
+                WriteCellValue(poamOpenXmlWriter, "Impact", 16);
+                WriteCellValue(poamOpenXmlWriter, "Impact Description", 16);
+                WriteCellValue(poamOpenXmlWriter, "Residual Risk Level", 16);
+                WriteCellValue(poamOpenXmlWriter, "Recommendations", 16);
+                WriteCellValue(poamOpenXmlWriter, "Resulting Residual Risk after Proposed Mitigations", 16);
                 poamOpenXmlWriter.WriteEndElement();
             }
             catch (Exception exception)
@@ -861,8 +891,13 @@ namespace Vulnerator.Model
                 { return; }
 
                 poamOpenXmlWriter.WriteStartElement(new Row());
+                //Every "WriteCellValue" is the next column, ideally a more efficient way of identifying columns would be made
+                //But for now a hacky solution to updating is just know which column is what so adding column names to help
+
+                //First Column is a hidden index like field. Not sure if it is even used anymore for emass because an export craps it out but doesn't have anything in it
                 WriteCellValue(poamOpenXmlWriter, poamRowCounterIndex.ToString(), 16);
 
+                //Control Vulnerability Description                
                 string descriptionCellValue = "Title: " + Environment.NewLine + sqliteDataReader["VulnTitle"].ToString() + doubleCarriageReturn +
                     "Description: " + Environment.NewLine + sqliteDataReader["Description"].ToString() + doubleCarriageReturn +
                     "Devices Affected:" + Environment.NewLine + sqliteDataReader["AssetIdToReport"].ToString().Replace(",", Environment.NewLine);
@@ -876,6 +911,7 @@ namespace Vulnerator.Model
                         "Description"
                     ), 
                     20);
+                //Security Control Number (NC / NA controls only)
                 if (IsDiacapPackage)
                 { WriteCellValue(poamOpenXmlWriter, sqliteDataReader["IaControl"].ToString(), 24); }
                 else
@@ -885,14 +921,83 @@ namespace Vulnerator.Model
                     else if (!string.IsNullOrWhiteSpace(sqliteDataReader["IaControl"].ToString()))
                     { WriteCellValue(poamOpenXmlWriter, ConvertDiacapToRmf(sqliteDataReader["IaControl"].ToString()), 24); }
                     else
-                    { WriteCellValue(poamOpenXmlWriter, string.Empty, 24); }
+                    { WriteCellValue(poamOpenXmlWriter, 'CM-6', 24); }
                 }
+
+                //Office / Org
                 WriteCellValue(poamOpenXmlWriter, ContactOrganization + ", " + ContactName + ", " + ContactNumber + ", " + ContactEmail, 20);
+
+                //Security Checks
                 WriteCellValue(poamOpenXmlWriter, sqliteDataReader["VulnId"].ToString(), 24);
+
+                //Resources Required
+                WriteCellValue(poamOpenXmlWriter, "System Administrator, ISSE", 20);
+
+                //Scheduled Completion Date
+                WriteCellValue(poamOpenXmlWriter, DateTime.Today.AddDays(90).ToString("MM/dd/yyyy"), 20);
+
+                //Milestone with Completion Dates
+                WriteCellValue(poamOpenXmlWriter, "POAM Review " + DateTime.Today.AddDays(90).ToString("MM/dd/yyyy"), 20);
+
+                //Milestone Changes
+                WriteCellValue(poamOpenXmlWriter, "", 20);
+
+                //Source Identifying Vulnerability
+                if (sqliteDataReader["FindingType"].ToString().Equals("WASSP"))
+                { WriteCellValue(poamOpenXmlWriter, sqliteDataReader["Source"].ToString(), 24); }
+                else if (!sqliteDataReader["FindingType"].ToString().Equals("ACAS"))
+                {
+                    WriteCellValue(poamOpenXmlWriter, sqliteDataReader["Source"].ToString() + " :: " +
+                        sqliteDataReader["Version"].ToString() + sqliteDataReader["Release"].ToString(), 24);
+                }
+                else
+                {
+                    WriteCellValue(poamOpenXmlWriter, sqliteDataReader["Source"].ToString() + " :: " +
+                        sqliteDataReader["Version"].ToString() + "." + sqliteDataReader["Release"].ToString(), 24);
+                }
+
+                //Status
+                if (mitigation != null)
+                { WriteCellValue(poamOpenXmlWriter, mitigation.MitigationStatus, 24); }
+                else
+                { WriteCellValue(poamOpenXmlWriter, sqliteDataReader["Status"].ToString(), 24); }
+
+                //Comments
+                if (mitigation != null)
+                { WriteCellValue(poamOpenXmlWriter, mitigation.MitigationText, 20); }
+                else
+                {
+                    string mitigationText = string.Empty;
+                    if (UserRequiresComments)
+                    { mitigationText = sqliteDataReader["Comments"].ToString(); }
+                    if (UserRequiresFindingDetails)
+                    {
+                        if (string.IsNullOrWhiteSpace(mitigationText))
+                        { mitigationText = sqliteDataReader["FindingDetails"].ToString(); }
+                        else
+                        { mitigationText += doubleCarriageReturn + sqliteDataReader["FindingDetails"].ToString(); }
+                    }
+                    WriteCellValue(
+                        poamOpenXmlWriter,
+                        LargeCellValueHandler(
+                            mitigationText,
+                            sqliteDataReader["VulnId"].ToString(),
+                            sqliteDataReader["AssetIdToReport"].ToString().Replace(",", Environment.NewLine),
+                            "Mitigation"
+                        ),
+                        20);
+                }
+
+                //Raw Severity
                 if (!string.IsNullOrWhiteSpace(sqliteDataReader["RawRisk"].ToString()))
                 { WriteCellValue(poamOpenXmlWriter, sqliteDataReader["RawRisk"].ToString(), 24); }
                 else
                 { WriteCellValue(poamOpenXmlWriter, ConvertAcasSeverityToDisaCategory(sqliteDataReader["Impact"].ToString()), 24); }
+
+                //Devices Affected
+                WriteCellValue(poamOpenXmlWriter, sqliteDataReader["AssetIdToReport"].ToString().Replace(",", Environment.NewLine), 20);
+
+                //Mitigations
                 if (mitigation != null)
                 { WriteCellValue(poamOpenXmlWriter, mitigation.MitigationText, 20); }
                 else
@@ -917,28 +1022,42 @@ namespace Vulnerator.Model
                         ), 
                         20);
                 }
-                WriteCellValue(poamOpenXmlWriter, string.Empty, 24);
-                WriteCellValue(poamOpenXmlWriter, string.Empty, 20);
-                WriteCellValue(poamOpenXmlWriter, string.Empty, 20);
-                WriteCellValue(poamOpenXmlWriter, string.Empty, 20);
-                WriteCellValue(poamOpenXmlWriter, string.Empty, 20);
-                if (sqliteDataReader["FindingType"].ToString().Equals("WASSP"))
-                { WriteCellValue(poamOpenXmlWriter, sqliteDataReader["Source"].ToString(), 24); }
-                else if (!sqliteDataReader["FindingType"].ToString().Equals("ACAS"))
+                //Predisposing Conditions
+                WriteCellValue(poamOpenXmlWriter, "", 20);
+                //Severity
+                WriteCellValue(poamOpenXmlWriter, "", 20);
+
+                //Relevance of Threat
+                WriteCellValue(poamOpenXmlWriter, "", 20);
+
+                //Threat Description
+                WriteCellValue(poamOpenXmlWriter, "Threat Description", 20);
+
+                //Likelihood
+                WriteCellValue(poamOpenXmlWriter, "", 20);
+
+                //Impact
+                WriteCellValue(poamOpenXmlWriter, "", 20);
+
+                //Impact Description 
+                WriteCellValue(poamOpenXmlWriter, "Impact Description", 20);
+
+                //Residual Risk Level
+                WriteCellValue(poamOpenXmlWriter, "", 20);
+
+                //Recommendations
+                WriteCellValue(poamOpenXmlWriter, "", 20);
+
+                //Resulting Residual Risk after Proposed Mitigations
+                WriteCellValue(poamOpenXmlWriter, "", 20);
+
+                /* I was lazy and didn't feel like figuring out what was in this db by finding the code
+                for (var i = 0; i < sqliteDataReader.FieldCount; i++)
                 {
-                    WriteCellValue(poamOpenXmlWriter, sqliteDataReader["Source"].ToString() + " :: " +
-                        sqliteDataReader["Version"].ToString() + sqliteDataReader["Release"].ToString(), 24);
+                    WriteCellValue(poamOpenXmlWriter, sqliteDataReader.GetName(i), 20); 
                 }
-                else
-                {
-                    WriteCellValue(poamOpenXmlWriter, sqliteDataReader["Source"].ToString() + " :: " +
-                        sqliteDataReader["Version"].ToString() + "." + sqliteDataReader["Release"].ToString(), 24);
-                }
-                if (mitigation != null)
-                { WriteCellValue(poamOpenXmlWriter, mitigation.MitigationStatus, 24); }
-                else
-                { WriteCellValue(poamOpenXmlWriter, sqliteDataReader["Status"].ToString(), 24); }
-                WriteCellValue(poamOpenXmlWriter, sqliteDataReader["AssetIdToReport"].ToString().Replace(",", Environment.NewLine), 20);
+                */
+
                 poamOpenXmlWriter.WriteEndElement();
                 poamRowCounterIndex++;
             }
