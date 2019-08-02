@@ -921,7 +921,7 @@ namespace Vulnerator.Model
                     else if (!string.IsNullOrWhiteSpace(sqliteDataReader["IaControl"].ToString()))
                     { WriteCellValue(poamOpenXmlWriter, ConvertDiacapToRmf(sqliteDataReader["IaControl"].ToString()), 24); }
                     else
-                    { WriteCellValue(poamOpenXmlWriter, 'CM-6', 24); }
+                    { WriteCellValue(poamOpenXmlWriter, "CM-6", 24); }
                 }
 
                 //Office / Org
