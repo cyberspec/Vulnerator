@@ -1022,34 +1022,36 @@ namespace Vulnerator.Model
                         ), 
                         20);
                 }
+
                 //Predisposing Conditions
-                WriteCellValue(poamOpenXmlWriter, "", 20);
+                WriteCellValue(poamOpenXmlWriter, "None", 20);
+
                 //Severity
-                WriteCellValue(poamOpenXmlWriter, "", 20);
+                WriteCellValue(poamOpenXmlWriter, ConvertAcasSeverityToRmfImpact(sqliteDataReader["Impact"].ToString()), 20);
 
                 //Relevance of Threat
-                WriteCellValue(poamOpenXmlWriter, "", 20);
+                WriteCellValue(poamOpenXmlWriter, "High", 20);
 
                 //Threat Description
-                WriteCellValue(poamOpenXmlWriter, "Threat Description", 20);
+                WriteCellValue(poamOpenXmlWriter, sqliteDataReader["Description"].ToString(), 20);
 
                 //Likelihood
-                WriteCellValue(poamOpenXmlWriter, "", 20);
+                WriteCellValue(poamOpenXmlWriter, ConvertAcasSeverityToRmfImpact(sqliteDataReader["Impact"].ToString()), 20);
 
                 //Impact
-                WriteCellValue(poamOpenXmlWriter, "", 20);
+                WriteCellValue(poamOpenXmlWriter, ConvertAcasSeverityToRmfImpact(sqliteDataReader["Impact"].ToString()), 20);
 
                 //Impact Description 
-                WriteCellValue(poamOpenXmlWriter, "Impact Description", 20);
+                WriteCellValue(poamOpenXmlWriter, sqliteDataReader["Description"].ToString() + "The impact to the organization and information system is " + ConvertAcasSeverityToRmfImpact(sqliteDataReader["Impact"].ToString()) +".", 20);
 
                 //Residual Risk Level
-                WriteCellValue(poamOpenXmlWriter, "", 20);
+                WriteCellValue(poamOpenXmlWriter, ConvertAcasSeverityToRmfImpact(sqliteDataReader["Impact"].ToString()), 20);
 
                 //Recommendations
-                WriteCellValue(poamOpenXmlWriter, "", 20);
+                WriteCellValue(poamOpenXmlWriter, "Fix, patch and/or configure to meet security requirements.", 20);
 
                 //Resulting Residual Risk after Proposed Mitigations
-                WriteCellValue(poamOpenXmlWriter, "", 20);
+                WriteCellValue(poamOpenXmlWriter, ConvertAcasSeverityToRmfProposedRisk(sqliteDataReader["Impact"].ToString()), 20);
 
                 /* I was lazy and didn't feel like figuring out what was in this db by finding the code
                 for (var i = 0; i < sqliteDataReader.FieldCount; i++)
@@ -2532,25 +2534,114 @@ namespace Vulnerator.Model
             }
         }
 
+
         private string ConvertAcasSeverityToRmfImpact(string acasSeverity)
         {
-            switch (acasSeverity)
+            try
             {
-                case "Critical":
-                    { return "VH"; }
-                case "High":
-                    { return "H"; }
-                case "Medium":
-                    { return "M"; }
-                case "Low":
-                    { return "L"; }
-                case "Informational":
-                    { return "VL"; }
-                default:
-                    { return "Unknown"; }
+                switch (acasSeverity)
+                {
+                    case "Critical":
+                        { return "Very High"; }
+                    case "High":
+                        { return "High"; }
+                    case "Medium":
+                        { return "Moderate"; }
+                    case "Low":
+                        { return "Low"; }
+                    case "Informational":
+                        { return "Very Low"; }
+                    default:
+                        { return "Unknown"; }
+                }
+            }
+            catch (Exception exception)
+            {
+                log.Error("Unable to convert ACAS severity value to impact.");
+                throw exception;
             }
         }
 
+        private string ConvertAcasSeverityToRmfLikelihood(string acasSeverity)
+        {
+            try
+            {
+                switch (acasSeverity)
+                {
+                    case "Critical":
+                        { return "Very High"; }
+                    case "High":
+                        { return "High"; }
+                    case "Medium":
+                        { return "Moderate"; }
+                    case "Low":
+                        { return "Low"; }
+                    case "Informational":
+                        { return "Very Low"; }
+                    default:
+                        { return "Unknown"; }
+                }
+            }
+            catch (Exception exception)
+            {
+                log.Error("Unable to convert ACAS severity value to likelihood.");
+                throw exception;
+            }
+        }
+
+        private string ConvertAcasSeverityToRmfResidualRisk(string acasSeverity)
+        {
+            try
+            {
+                switch (acasSeverity)
+                {
+                    case "Critical":
+                        { return "Very High"; }
+                    case "High":
+                        { return "High"; }
+                    case "Medium":
+                        { return "Moderate"; }
+                    case "Low":
+                        { return "Low"; }
+                    case "Informational":
+                        { return "Very Low"; }
+                    default:
+                        { return "Unknown"; }
+                }
+            }
+            catch (Exception exception)
+            {
+                log.Error("Unable to convert ACAS severity value to residual risk.");
+                throw exception;
+            }
+        }
+
+        private string ConvertAcasSeverityToRmfProposedRisk(string acasSeverity)
+        {
+            try
+            {
+                switch (acasSeverity)
+                {
+                    case "Critical":
+                        { return "High"; }
+                    case "High":
+                        { return "Moderate"; }
+                    case "Medium":
+                        { return "Low"; }
+                    case "Low":
+                        { return "Very Low"; }
+                    case "Informational":
+                        { return "Very Low"; }
+                    default:
+                        { return "Unknown"; }
+                }
+            }
+            catch (Exception exception)
+            {
+                log.Error("Unable to convert ACAS severity value to proposed risk.");
+                throw exception;
+            }
+        }
         private string CompareIavmAgeToUserSettings(string iavmAge)
         {
             try
