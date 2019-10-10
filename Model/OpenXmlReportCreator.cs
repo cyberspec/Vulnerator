@@ -2513,15 +2513,15 @@ namespace Vulnerator.Model
             {
                 switch (acasSeverity)
                 {
-                    case "Critical":
+                    case "4":
                         { return "I"; }
-                    case "High":
+                    case "3":
                         { return "I"; }
-                    case "Medium":
+                    case "2":
                         { return "II"; }
-                    case "Low":
+                    case "1":
                         { return "III"; }
-                    case "Informational":
+                    case "0":
                         { return "IV"; }
                     default:
                         { return "Unknown"; }
@@ -2541,15 +2541,15 @@ namespace Vulnerator.Model
             {
                 switch (acasSeverity)
                 {
-                    case "Critical":
+                    case "4":
                         { return "Very High"; }
-                    case "High":
+                    case "3":
                         { return "High"; }
-                    case "Medium":
+                    case "2":
                         { return "Moderate"; }
-                    case "Low":
+                    case "1":
                         { return "Low"; }
-                    case "Informational":
+                    case "0":
                         { return "Very Low"; }
                     default:
                         { return "Unknown"; }
@@ -2568,15 +2568,15 @@ namespace Vulnerator.Model
             {
                 switch (acasSeverity)
                 {
-                    case "Critical":
+                    case "4":
                         { return "Very High"; }
-                    case "High":
+                    case "3":
                         { return "High"; }
-                    case "Medium":
+                    case "2":
                         { return "Moderate"; }
-                    case "Low":
+                    case "1":
                         { return "Low"; }
-                    case "Informational":
+                    case "0":
                         { return "Very Low"; }
                     default:
                         { return "Unknown"; }
@@ -2595,15 +2595,15 @@ namespace Vulnerator.Model
             {
                 switch (acasSeverity)
                 {
-                    case "Critical":
+                    case "4":
                         { return "Very High"; }
-                    case "High":
+                    case "3":
                         { return "High"; }
-                    case "Medium":
+                    case "2":
                         { return "Moderate"; }
-                    case "Low":
+                    case "1":
                         { return "Low"; }
-                    case "Informational":
+                    case "0":
                         { return "Very Low"; }
                     default:
                         { return "Unknown"; }
@@ -2622,15 +2622,15 @@ namespace Vulnerator.Model
             {
                 switch (acasSeverity)
                 {
-                    case "Critical":
+                    case "4":
                         { return "High"; }
-                    case "High":
+                    case "3":
                         { return "Moderate"; }
-                    case "Medium":
+                    case "2":
                         { return "Low"; }
-                    case "Low":
+                    case "1":
                         { return "Very Low"; }
-                    case "Informational":
+                    case "0":
                         { return "Very Low"; }
                     default:
                         { return "Unknown"; }

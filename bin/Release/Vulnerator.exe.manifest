@@ -4,7 +4,7 @@
   <description asmv2:iconFile="Resources\chart.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="Vulnerator" version="6.1.9.21376" language="neutral" processorArchitecture="x86" />
+    <assemblyIdentity name="Vulnerator" version="6.1.9.29866" language="neutral" processorArchitecture="x86" />
     <commandLine file="Vulnerator.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -380,13 +380,13 @@
   </dependency>
   <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Vulnerator.exe" size="7636440">
-      <assemblyIdentity name="Vulnerator" version="6.1.9.21376" language="neutral" processorArchitecture="x86" />
+      <assemblyIdentity name="Vulnerator" version="6.1.9.29866" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>UI1A0rjkGP6u5/zpmYYqn0I5zSzpjAI/Q0iYsyLYmg0=</dsig:DigestValue>
+        <dsig:DigestValue>X8iQNGjDr3j5PRgdT37PCMhBZ58RQ0td5Pi5bxn/Vr4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
