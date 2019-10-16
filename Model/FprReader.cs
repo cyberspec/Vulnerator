@@ -749,7 +749,7 @@ namespace Vulnerator.Model
                 case "IV":
                     { return "Informational"; }
                 default:
-                    { return "Unknown"; }
+                    { return rawRisk; }
             }
         }
 

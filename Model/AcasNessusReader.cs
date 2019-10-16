@@ -302,6 +302,7 @@ namespace Vulnerator.Model
             {
                 sqliteCommand.Parameters.Add(new SQLiteParameter("VulnId", xmlReader.GetAttribute("pluginID")));
                 sqliteCommand.Parameters.Add(new SQLiteParameter("RuleId", xmlReader.GetAttribute("pluginID")));
+                sqliteCommand.Parameters.Add(new SQLiteParameter("Impact", xmlReader.GetAttribute("severity")));
                 sqliteCommand.Parameters.Add(new SQLiteParameter("VulnTitle", xmlReader.GetAttribute("pluginName")));
                 sqliteCommand.Parameters.Add(new SQLiteParameter("LastObserved", workingSystem.StartTime.ToLongDateString()));
                 sqliteCommand.Parameters.Add(new SQLiteParameter("Status", "Ongoing"));

@@ -408,7 +408,7 @@
                             Margin="5,0"
                             VerticalAlignment="Top"
                             Style="{StaticResource styleHyperlinkTextBlock}"
-                            Text="Maintained by Kuchta Creative Services, LLC"
+                            Text="Maintained by the Community"
                             TextWrapping="NoWrap">
                             <TextBlock.InputBindings>
                                 <MouseBinding
@@ -424,6 +424,19 @@
                         VerticalAlignment="Top"
                         Content="Credits"
                         Style="{StaticResource styleSecondLevelHeader}" />
+                    <TextBlock
+                        Name="tbCyberspec"
+                        Margin="5,0"
+                        Style="{StaticResource styleHyperlinkTextBlock}"
+                        Text="Cyberspec - Functional Updates for Navy POAM and ACAS"
+                        TextWrapping="NoWrap">
+                        <TextBlock.InputBindings>
+                            <MouseBinding
+                                Command="{Binding AboutLinksCommand}"
+                                CommandParameter="{Binding ElementName=tbCyberspec, Path=Name}"
+                                MouseAction="LeftClick" />
+                        </TextBlock.InputBindings>
+                    </TextBlock>
                     <TextBlock
                         Name="tbAlex"
                         Margin="5,0"

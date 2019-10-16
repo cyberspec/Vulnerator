@@ -466,10 +466,10 @@ namespace Vulnerator.Model
                 {
                     sqliteCommand.Parameters.Add(new SQLiteParameter("FindingType", findingType));
                     sqliteCommand.CommandText = "SELECT AssetIdToReport, HostName, IpAddress, GroupName, " + 
-                        "SUM(CASE WHEN (RawRisk = 'I' OR (Impact = 'Critical' AND RawRisk IS NULL) OR (Impact = 'High' AND RawRisk IS NULL)) AND Status = 'Ongoing' THEN 1 ELSE 0 END) AS CatI, " + 
-                        "SUM(CASE WHEN (RawRisk = 'II' OR (Impact = 'Medium' AND RawRisk IS NULL)) AND Status = 'Ongoing' THEN 1 ELSE 0 END) AS CatII, " + 
-                        "SUM(CASE WHEN (RawRisk = 'III' OR (Impact = 'Low' AND RawRisk IS NULL)) AND Status = 'Ongoing' THEN 1 ELSE 0 END) AS CatIII, " +
-                        "SUM(CASE WHEN (RawRisk = 'IV' OR (Impact = 'Informational' AND RawRisk IS NULL)) AND Status = 'Ongoing' THEN 1 ELSE 0 END) AS CatIV, " +
+                        "SUM(CASE WHEN (RawRisk = 'I' OR (Impact = '4' AND RawRisk IS NULL) OR (Impact = '3' AND RawRisk IS NULL)) AND Status = 'Ongoing' THEN 1 ELSE 0 END) AS CatI, " + 
+                        "SUM(CASE WHEN (RawRisk = 'II' OR (Impact = '2' AND RawRisk IS NULL)) AND Status = 'Ongoing' THEN 1 ELSE 0 END) AS CatII, " + 
+                        "SUM(CASE WHEN (RawRisk = 'III' OR (Impact = '1' AND RawRisk IS NULL)) AND Status = 'Ongoing' THEN 1 ELSE 0 END) AS CatIII, " +
+                        "SUM(CASE WHEN (RawRisk = 'IV' OR (Impact = '0' AND RawRisk IS NULL)) AND Status = 'Ongoing' THEN 1 ELSE 0 END) AS CatIV, " +
                         "COUNT(CASE WHEN Status = 'Ongoing' THEN 1 END) AS Total, " +
                         "OperatingSystem, IsCredentialed, Found21745, Found26917, FileName " +
                         "FROM Assets NATURAL JOIN UniqueFinding NATURAL JOIN Vulnerability NATURAL JOIN Groups NATURAL JOIN FileNames " +
@@ -1042,7 +1042,7 @@ namespace Vulnerator.Model
                 WriteCellValue(poamOpenXmlWriter, ConvertAcasSeverityToRmfImpact(sqliteDataReader["Impact"].ToString()), 20);
 
                 //Impact Description 
-                WriteCellValue(poamOpenXmlWriter, sqliteDataReader["Description"].ToString() + "The impact to the organization and information system is " + ConvertAcasSeverityToRmfImpact(sqliteDataReader["Impact"].ToString()) +".", 20);
+                WriteCellValue(poamOpenXmlWriter, sqliteDataReader["Description"].ToString() + "The impact to the organization and information system is " + ConvertAcasSeverityToRmfImpact(sqliteDataReader["RawRisk"].ToString()) +".", 20);
 
                 //Residual Risk Level
                 WriteCellValue(poamOpenXmlWriter, ConvertAcasSeverityToRmfImpact(sqliteDataReader["Impact"].ToString()), 20);
@@ -2431,15 +2431,15 @@ namespace Vulnerator.Model
                 {
                     switch (impact)
                     {
-                        case "Critical":
+                        case "4":
                             { riskFactorMatch = IncludeCriticalFindings; riskFactorToStigSeverityCrossRef = IncludCatIFindings; break; }
-                        case "High":
+                        case "3":
                             { riskFactorMatch = IncludeHighFindings; riskFactorToStigSeverityCrossRef = IncludCatIFindings; break; }
-                        case "Medium":
+                        case "2":
                             { riskFactorMatch = IncludeMediumFindings; riskFactorToStigSeverityCrossRef = IncludCatIIFindings; break; }
-                        case "Low":
+                        case "1":
                             { riskFactorMatch = IncludeLowFindings; riskFactorToStigSeverityCrossRef = IncludCatIIIFindings; break; }
-                        case "Informational":
+                        case "0":
                             { riskFactorMatch = IncludeInformationalFindings; riskFactorToStigSeverityCrossRef = IncludCatIVFindings; break; }
                         default:
                             { break; }
@@ -2524,7 +2524,7 @@ namespace Vulnerator.Model
                     case "0":
                         { return "IV"; }
                     default:
-                        { return "Unknown"; }
+                        { return acasSeverity; }
                 }
             }
             catch (Exception exception)
@@ -2552,7 +2552,7 @@ namespace Vulnerator.Model
                     case "0":
                         { return "Very Low"; }
                     default:
-                        { return "Unknown"; }
+                        { return acasSeverity; }
                 }
             }
             catch (Exception exception)
@@ -2579,7 +2579,7 @@ namespace Vulnerator.Model
                     case "0":
                         { return "Very Low"; }
                     default:
-                        { return "Unknown"; }
+                        { return acasSeverity; }
                 }
             }
             catch (Exception exception)
@@ -2606,7 +2606,7 @@ namespace Vulnerator.Model
                     case "0":
                         { return "Very Low"; }
                     default:
-                        { return "Unknown"; }
+                        { return acasSeverity; }
                 }
             }
             catch (Exception exception)
@@ -2633,7 +2633,7 @@ namespace Vulnerator.Model
                     case "0":
                         { return "Very Low"; }
                     default:
-                        { return "Unknown"; }
+                        { return acasSeverity; }
                 }
             }
             catch (Exception exception)

@@ -1822,7 +1822,12 @@ namespace Vulnerator.ViewModel
 						EmailAlex();
 						break;
 					}
-				case "tbJeffV":
+                case "tbCyberspec":
+                    {
+                        EmailCyberspec();
+                        break;
+                    }
+                case "tbJeffV":
 					{
 						EmailJeffV();
 						break;
@@ -1867,7 +1872,20 @@ namespace Vulnerator.ViewModel
 			}
 		}
 
-		private void EmailAlex()
+        private void EmailCyberspec()
+        {
+            string mailTo = "mailto:accounts@cyberspec.net";
+            try
+            { Process.Start(mailTo); }
+            catch (Exception exception)
+            {
+                log.Error("Unable to send email; no email application exists.");
+                View.NoEmailApplication emailWarning = new View.NoEmailApplication();
+                emailWarning.ShowDialog();
+                return;
+            }
+        }
+        private void EmailAlex()
 		{
 			string mailTo = "mailto:alex.kuchta@navy.mil";
 			try
@@ -1939,7 +1957,7 @@ namespace Vulnerator.ViewModel
 
 		private void VisitWikiPage()
 		{
-			string goTo = "https://github.com/Vulnerator/Vulnerator/wiki";
+			string goTo = "https://github.com/cyberspec/Vulnerator";
 			try
 			{ Process.Start(GetDefaultBrowserPath(), goTo); }
 			catch (Exception exception)
@@ -1953,7 +1971,7 @@ namespace Vulnerator.ViewModel
 
 		private void VisitRepo()
 		{
-			string goTo = "https://github.com/Vulnerator/Vulnerator";
+			string goTo = "https://github.com/cyberspec/Vulnerator";
 			try
 			{ Process.Start(GetDefaultBrowserPath(), goTo); }
 			catch (Exception exception)
@@ -1967,7 +1985,7 @@ namespace Vulnerator.ViewModel
 
         private void VisitIssues()
         {
-            string goTo = "https://github.com/Vulnerator/Vulnerator/issues";
+            string goTo = "https://github.com/cyberspec/Vulnerator";
             try
             { Process.Start(GetDefaultBrowserPath(), goTo); }
             catch (Exception exception)
@@ -1981,7 +1999,7 @@ namespace Vulnerator.ViewModel
 
         private void VisitKcs()
 		{
-			string goTo = "https://kuchtacreativeservices.com";
+			string goTo = "https://cyberspec.net";
 			try
 			{ Process.Start(GetDefaultBrowserPath(), goTo); }
 			catch (Exception exception)

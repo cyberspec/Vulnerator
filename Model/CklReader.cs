@@ -655,7 +655,7 @@ namespace Vulnerator
                     case "Unknown":
                         { return "Unknown"; }
                     default:
-                        { return "Unknown"; }
+                        { return severity; }
                 }
             }
             catch (Exception exception)
@@ -680,7 +680,7 @@ namespace Vulnerator
                     case "unknown":
                         { return "Unknown"; }
                     default:
-                        { return "Unknown"; }
+                        { return severity; }
                 }
             }
             catch (Exception exception)
