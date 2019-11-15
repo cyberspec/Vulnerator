@@ -20,6 +20,8 @@ namespace Vulnerator.Model
         private string source = "Placeholder";
         private string version = "PH";
         private string release = "PH";
+        private string scannerip = "PH";
+        private string credentialed = "PH";
         private bool UserPrefersHostName { get { return bool.Parse(ConfigAlter.ReadSettingsFromDictionary("rbHostIdentifier")); } }
         int i = 1;
         private static readonly ILog log = LogManager.GetLogger(typeof(Logger));
@@ -221,8 +223,8 @@ namespace Vulnerator.Model
                 log.Error("Unable to generate XmlReaderSettings.");
                 throw exception;
             }
-        }
-
+        }    
+    
         private WorkingSystem ParseHostInformation(XmlReader xmlReader, WorkingSystem workingSystem)
         {
             try
@@ -231,9 +233,9 @@ namespace Vulnerator.Model
                 {
                     if (xmlReader.IsStartElement() && xmlReader.Name.Equals("tag"))
                     {
-                        switch (xmlReader.GetAttribute("name"))
+                        switch (xmlReader.GetAttribute("name").ToLower())
                         {
-                            case "HOST_END":
+                            case "host_end":
                                 {
                                     xmlReader.Read();
                                     DateTime scanEndTime;
@@ -242,7 +244,7 @@ namespace Vulnerator.Model
                                     { workingSystem.SetEndTime(scanEndTime); }
                                     break;
                                 }
-                            case "Credentialed_Scan":
+                            case "credentialed_scan":
                                 {
                                     xmlReader.Read();
                                     workingSystem.SetCredentialedScan(xmlReader.Value);
@@ -272,7 +274,7 @@ namespace Vulnerator.Model
                                     workingSystem.SetIpAddress(xmlReader.Value);
                                     break;
                                 }
-                            case "HOST_START":
+                            case "host_start":
                                 {
                                     xmlReader.Read();
                                     DateTime scanStartTime;
@@ -280,6 +282,40 @@ namespace Vulnerator.Model
                                     { workingSystem.SetStartTime(scanStartTime); }
                                     break;
                                 }
+                            case "wmi-domain":
+                                {
+                                    xmlReader.Read();
+                                    workingSystem.SetWMIDomain(xmlReader.Value);
+                                    break;
+                                }
+                        
+                            case "lastauthenticatedresults":
+                                {
+                                    xmlReader.Read();
+                                    DateTime lastAuthResults;
+                                    if (DateTime.TryParseExact(xmlReader.Value.Replace("  ", " "), dateTimeFormat, null, System.Globalization.DateTimeStyles.None, out lastAuthResults))
+                                    { workingSystem.SetStartTime(lastAuthResults); }
+                                    break;
+                                }
+
+                            case "bios-uuid":
+                                {
+                                    xmlReader.Read();
+                                    workingSystem.SetBIOSUUID(xmlReader.Value);
+                                    break;
+                                }
+                            case "policy-used":
+                                {
+                                    xmlReader.Read();
+                                    workingSystem.SetPolicyUsed(xmlReader.Value);
+                                    break;
+                                }
+                            case "mcafee_epo-agent-guid":
+                            {
+                                xmlReader.Read();
+                                workingSystem.SetMcAfeeGIUD(xmlReader.Value);
+                                break;
+                            }
                             default:
                                 { break; }
                         }
@@ -300,6 +336,10 @@ namespace Vulnerator.Model
         {
             try
             {
+
+                sqliteCommand.Parameters.Add(new SQLiteParameter("port", xmlReader.GetAttribute("port")));
+                sqliteCommand.Parameters.Add(new SQLiteParameter("svc_name", xmlReader.GetAttribute("svc_name")));
+                sqliteCommand.Parameters.Add(new SQLiteParameter("protocol", xmlReader.GetAttribute("protocol")));
                 sqliteCommand.Parameters.Add(new SQLiteParameter("VulnId", xmlReader.GetAttribute("pluginID")));
                 sqliteCommand.Parameters.Add(new SQLiteParameter("RuleId", xmlReader.GetAttribute("pluginID")));
                 sqliteCommand.Parameters.Add(new SQLiteParameter("Impact", xmlReader.GetAttribute("severity")));
@@ -307,6 +347,7 @@ namespace Vulnerator.Model
                 sqliteCommand.Parameters.Add(new SQLiteParameter("LastObserved", workingSystem.StartTime.ToLongDateString()));
                 sqliteCommand.Parameters.Add(new SQLiteParameter("Status", "Ongoing"));
                 sqliteCommand.Parameters.Add(new SQLiteParameter("FindingType", "ACAS"));
+
                 if (UserPrefersHostName && !string.IsNullOrWhiteSpace(workingSystem.HostName))
                 { sqliteCommand.Parameters.Add(new SQLiteParameter("AssetIdToReport", workingSystem.HostName)); }
                 else if (UserPrefersHostName && !string.IsNullOrWhiteSpace(workingSystem.NetBiosName))
@@ -631,6 +672,7 @@ namespace Vulnerator.Model
         {
             try
             {
+
                 StringReader stringReader = new StringReader(sqliteCommand.Parameters["PluginOutput"].Value.ToString());
                 string line = string.Empty;
                 while (line != null)
@@ -641,13 +683,27 @@ namespace Vulnerator.Model
                     else if (line.StartsWith("Plugin feed version"))
                     {
                         release = line.Split(':')[1].Trim();
-                        line = null;
                     }
+                    else if (line.StartsWith("Scanner IP"))
+                    {
+                        scannerip = line.Split(':')[1].Trim();
+                    }
+                    else if (line.StartsWith("Credentialed checks"))
+                    {
+                        credentialed = line.Split(':')[1].Trim();
+                    }
+                    else
+                        line = null;
+
                 }
                 source = "Assured Compliance Assessment Solution (ACAS) Nessus Scanner";
                 sqliteCommand.Parameters.Add(new SQLiteParameter("Source", source));
                 sqliteCommand.Parameters.Add(new SQLiteParameter("Version", version));
                 sqliteCommand.Parameters.Add(new SQLiteParameter("Release", release));
+                sqliteCommand.Parameters.Add(new SQLiteParameter("ScannerIP", scannerip));
+                sqliteCommand.Parameters.Add(new SQLiteParameter("Credentialed", credentialed));
+
+
             }
             catch (Exception exception)
             {
