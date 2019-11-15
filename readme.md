@@ -1,4 +1,4 @@
-﻿# Vulnerator
+﻿# VulneratorX
 ## The UN-official distribution of the vulnerability parsing utility.
 
 Please see the main project if you want the official version.
